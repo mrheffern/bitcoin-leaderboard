@@ -26,7 +26,7 @@
       <% @transactions.each do |transaction| %>
         <div class="border-b pb-4">
           <div class="flex justify-between items-center">
-            <div class="font-mono text-sm"><%= transaction.tx_hash %></div>
+            <div class="font-mono text-sm"><%= transaction.tx_hash[0..8] %>...<%= transaction.tx_hash[-8..-1] %></div>
             <div class="font-mono"><%= number_with_precision(transaction.amount, precision: 8) %> BTC</div>
           </div>
           <div class="text-gray-500 text-sm">

@@ -1,0 +1,4 @@
+:schedule:
+  check_bitcoin_transactions:
+    every: '5m'   # Checks every 5 minutes
+    class: CheckBitcoinTransactionsJob
