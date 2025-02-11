@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <title>BTC Leaderboard</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -8,34 +9,38 @@
 
     <%= stylesheet_link_tag "application" %>
     <%= javascript_importmap_tags %>
-  </head>
+</head>
 
-  <body class="bg-gray-100">
+<body class="bg-gray-100">
     <nav class="bg-white shadow-lg">
-      <div class="max-w-6xl mx-auto px-4">
-        <div class="flex justify-between items-center py-4">
-          <div class="text-xl font-bold">BTC Leaderboard</div>
-          <div>
-            <% if user_signed_in? %>
-              <%= link_to 'Transactions', transactions_path, class: 'px-4 py-2' %>
-              <%= button_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'px-4 py-2 bg-red-500 text-white rounded' %>
-            <% else %>
-              <%= link_to 'Sign In', new_user_session_path, class: 'px-4 py-2 bg-blue-500 text-white rounded' %>
-            <% end %>
-          </div>
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <%= inline_svg_tag "btc-leaderboard-logo.svg", class: "h-14" %>
+                    <span class="text-xl font-bold ml-2">BTC Leaderboard</span>
+                </div>
+                <div>
+                    <% if user_signed_in? %>
+                    <%= link_to 'Transactions', transactions_path, class: 'px-4 py-2' %>
+                    <%= button_to 'Sign Out', destroy_user_session_path, method: :delete, class: 'px-4 py-2 bg-red-500 text-white rounded' %>
+                    <% else %>
+                    <%= link_to 'Sign In', new_user_session_path, class: 'px-4 py-2 bg-blue-500 text-white rounded' %>
+                    <% end %>
+                </div>
+            </div>
         </div>
-      </div>
     </nav>
 
     <div class="max-w-6xl mx-auto px-4 py-8">
-      <% if notice %>
+        <% if notice %>
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4"><%= notice %></div>
-      <% end %>
-      <% if alert %>
+        <% end %>
+        <% if alert %>
         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"><%= alert %></div>
-      <% end %>
+        <% end %>
 
-      <%= yield %>
+        <%= yield %>
     </div>
-  </body>
+</body>
+
 </html>

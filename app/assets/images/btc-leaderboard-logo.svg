@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Background Circle -->
+  <circle cx="50" cy="50" r="45" fill="#F7931A"/>
+  
+  <!-- Trophy -->
+  <path d="M65 25h-6v-3a2 2 0 00-2-2H43a2 2 0 00-2 2v3h-6a2 2 0 00-2 2v8c0 5 4 9 9 9 1.5 0 3-.4 4.3-1.2A9 9 0 0054 44c1.3.8 2.8 1.2 4.3 1.2 5 0 9-4 9-9v-8a2 2 0 00-2-2zm-22 10c0-2.8 2.2-5 5-5s5 2.2 5 5-2.2 5-5 5-5-2.2-5-5zm20 0c0 2.8-2.2 5-5 5s-5-2.2-5-5 2.2-5 5-5 5 2.2 5 5z" fill="white"/>
+  <rect x="45" y="45" width="10" height="20" fill="white"/>
+  <rect x="40" y="65" width="20" height="4" rx="2" fill="white"/>
+</svg>

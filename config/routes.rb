@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   # get "transactions/show"
 
   devise_for :users
-  resources :transactions, only: [:index, :show]
+  resources :transactions, only: [:index, :show, :new, :create]
 
   # Change the root route to point to our transactions index
   root "transactions#index"
