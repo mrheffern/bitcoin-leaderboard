@@ -1,20 +1,28 @@
-# app/jobs/check_bitcoin_transactions_job.rb
-class CheckBitcoinTransactionsJob < ApplicationJob
-  queue_as :default
-
+class CheckBitcoinTransactionsJob
   def perform
+    puts "Starting job at #{Time.current}"
+    
     User.find_each do |user|
+      puts "Checking user: #{user.email} with address: #{user.btc_public_key}"
       next unless user.btc_public_key.present?
       
       transactions = BitcoinApiService.check_address(user.btc_public_key)
       
       transactions.each do |tx|
-        # Skip if we've already recorded this transaction
         next if Transaction.exists?(tx_hash: tx['txid'])
         
-        # Calculate the amount received by this address
-        amount = calculate_received_amount(tx, user.btc_public_key)
-        
+        # Find outputs to our address
+        amount = tx['vout']
+          .select { |vout| vout['scriptpubkey_address'] == user.btc_public_key }
+          .sum { |vout| vout['value'].to_f / 100_000_000 }
+
+        # Skip if we didn't receive anything in this transaction
+        next if amount <= 0
+
+        puts "Recording transaction: #{tx['txid']}"
+        puts "Amount: #{amount} BTC"
+        puts "Status: #{tx['status']['confirmed'] ? 'confirmed' : 'pending'}"
+
         Transaction.create!(
           user: user,
           tx_hash: tx['txid'],
@@ -23,14 +31,8 @@ class CheckBitcoinTransactionsJob < ApplicationJob
         )
       end
     end
-  end
 
-  private
-
-  def calculate_received_amount(tx, address)
-    # Sum up all outputs that went to this address
-    tx['vout']
-      .select { |vout| vout['scriptpubkey_address'] == address }
-      .sum { |vout| vout['value'].to_f / 100_000_000 } # Convert sats to BTC
+    puts "Job completed at #{Time.current}"
+    Delayed::Job.enqueue(CheckBitcoinTransactionsJob.new, run_at: 1.minute.from_now)
   end
 end

@@ -21,12 +21,10 @@ gem "jbuilder"
 
 gem "devise"
 
-gem 'inline_svg'
+gem "inline_svg"
 
-# Gemfile
-gem 'redis'
-gem 'sidekiq'
-gem 'sidekiq-scheduler'
+gem "delayed_job_active_record"
+gem "daemons"
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 
