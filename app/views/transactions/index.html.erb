@@ -1,23 +1,76 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-  <div class="bg-white rounded-lg shadow p-6">
-    <h2 class="text-2xl font-bold mb-4">Top Recipients</h2>
-    <div class="space-y-4">
-      <% User.order(total_btc_received: :desc).limit(10).each do |user| %>
-        <div class="flex justify-between items-center">
-          <div>
-            <span class="font-medium"><%= user.email %></span>
-            <span class="text-gray-500 text-sm">(<%= user.total_transactions %> transactions)</span>
+  <!-- Left column with stacked recipient sections -->
+  <div>
+    <!-- Top Recipients (All-time) -->
+    <div class="bg-white rounded-lg shadow p-6 mb-8">
+      <h2 class="text-2xl font-bold mb-4">Top Recipients</h2>
+      <div class="space-y-4">
+        <% User.order(total_btc_received: :desc).limit(10).each do |user| %>
+          <div class="flex justify-between items-center">
+            <div>
+              <span class="font-medium"><%= user.email %></span>
+              <span class="text-gray-500 text-sm">(<%= user.total_transactions %> transactions)</span>
+            </div>
+            <div class="font-mono"><%= number_with_precision(user.total_btc_received, precision: 8) %> BTC</div>
           </div>
-          <div class="font-mono"><%= number_with_precision(user.total_btc_received, precision: 8) %> BTC</div>
-        </div>
-      <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Top Weekly Recipients -->
+    <div class="bg-white rounded-lg shadow p-6 mb-8">
+      <h2 class="text-2xl font-bold mb-4">Top Weekly Recipients</h2>
+      <div class="space-y-4">
+        <% 
+          this_week_start = Time.current.beginning_of_week
+          weekly_data = Transaction.where('created_at >= ?', this_week_start)
+            .group(:user_id)
+            .select('user_id, SUM(amount) as weekly_amount, COUNT(*) as transaction_count')
+            .order('weekly_amount DESC')
+            .limit(10)
+        %>
+        <% weekly_data.each do |result| %>
+          <div class="flex justify-between items-center">
+            <div>
+              <span class="font-medium"><%= User.find(result.user_id).email %></span>
+              <span class="text-gray-500 text-sm">(<%= result.transaction_count %> transactions)</span>
+            </div>
+            <div class="font-mono"><%= number_with_precision(result.weekly_amount, precision: 8) %> BTC</div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Top Monthly Recipients -->
+    <div class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-2xl font-bold mb-4">Top Monthly Recipients</h2>
+      <div class="space-y-4">
+        <% 
+          this_month_start = Time.current.beginning_of_month
+          monthly_data = Transaction.where('created_at >= ?', this_month_start)
+            .group(:user_id)
+            .select('user_id, SUM(amount) as monthly_amount, COUNT(*) as transaction_count')
+            .order('monthly_amount DESC')
+            .limit(10)
+        %>
+        <% monthly_data.each do |result| %>
+          <div class="flex justify-between items-center">
+            <div>
+              <span class="font-medium"><%= User.find(result.user_id).email %></span>
+              <span class="text-gray-500 text-sm">(<%= result.transaction_count %> transactions)</span>
+            </div>
+            <div class="font-mono"><%= number_with_precision(result.monthly_amount, precision: 8) %> BTC</div>
+          </div>
+        <% end %>
+      </div>
     </div>
   </div>
 
+  <!-- Right column for transactions (unchanged) -->
   <div class="bg-white rounded-lg shadow p-6">
     <h2 class="text-2xl font-bold mb-4">Recent Transactions</h2>
     <div class="space-y-4">
-      <% @transactions.each do |transaction| %>
+      <% @transactions.first(7).each do |transaction| %>
         <div class="border-b pb-4">
           <div class="flex justify-between items-center">
             <div class="font-mono text-sm"><%= transaction.tx_hash[0..8] %>...<%= transaction.tx_hash[-8..-1] %></div>
